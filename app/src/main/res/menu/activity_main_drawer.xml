@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@mipmap/profile"
+            android:title="Профиль" />
+        <item
+            android:id="@+id/nav_routes"
+            android:icon="@mipmap/routes"
+            android:title="Маршруты" />
+        <item
+            android:id="@+id/nav_map"
+            android:icon="@mipmap/map"
+            android:title="Карта" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Настройки" />
+    </group>
+    <item android:title="Дополнительно">
+        <menu>
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_info"
+                android:title="Помощь" />
+            <item
+                android:id="@+id/nav_dev"
+                android:icon="@drawable/ic_developers"
+                android:title="Разработчики" />
+        </menu>
+    </item>
+
+</menu>

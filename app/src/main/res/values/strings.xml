@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">BiGiPiS</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="login">Вход</string>
+    <string name="login2">Войти</string>
+    <string name="register">Регистрация</string>
+    <string name="hint_password">Пароль</string>
+    <string name="hint_email">Почта</string>
+    <string name="hint_repeat_password">Повторите</string>
+    <string name="isNakers">У меня есть Nakers</string>
+    <string name="changeUserIcon">ChangeUserIcon</string>
+    <string name="hint_nickname">Ник</string>
+    <string name="loading">Загрузка</string>
+    <string name="action_sign">Войти</string>
+    <string name="action_exit">Выйти</string>
+    <string name="stat">Статистика</string>
+    <string name="routes">Маршруты</string>
+    <string name="achievements">Достижения</string>
+    <string name="vk_com_developer"><![CDATA[vk.com/id200966643]]></string>
+    <string name="loadingText">Загрузка...</string>
+</resources>
