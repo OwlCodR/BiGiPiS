@@ -46,6 +46,4 @@
         android:layout_height="wrap_content"
         android:fadeScrollbars="false"
         android:isScrollContainer="false" />
-
-
 </FrameLayout>

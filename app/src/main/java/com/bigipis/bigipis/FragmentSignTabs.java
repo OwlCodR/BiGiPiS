@@ -11,11 +11,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
-public class FragmentSignTabs extends Fragment implements TabLayout.OnTabSelectedListener {
+public class FragmentSignTabs extends Fragment{
 
     private View myInflatedView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private ViewPagerAdapter adapter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class FragmentSignTabs extends Fragment implements TabLayout.OnTabSelecte
         tabLayout = myInflatedView.findViewById(R.id.tableLayoutSign);
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.addOnTabSelectedListener(this);
+        //tabLayout.addOnTabSelectedListener(this);
 
         setHasOptionsMenu(true);
 
@@ -42,22 +43,9 @@ public class FragmentSignTabs extends Fragment implements TabLayout.OnTabSelecte
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter = new ViewPagerAdapter(getChildFragmentManager(), getActivity());
         adapter.addFragment(new FragmentLogin(), "Вход");
         adapter.addFragment(new FragmentRegisterStart(), "Регистрация");
         viewPager.setAdapter(adapter);
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) { return;}
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-        return;
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        return;
     }
 }

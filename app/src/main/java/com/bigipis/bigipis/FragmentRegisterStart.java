@@ -19,7 +19,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import static com.bigipis.bigipis.FragmentRegisterFinish.TAG_EMAIL;
 import static com.bigipis.bigipis.FragmentRegisterFinish.TAG_PASSWORD;
-import static com.bigipis.bigipis.MainActivity.isNakersConnected;
 
 public class FragmentRegisterStart extends Fragment implements View.OnClickListener {
 
@@ -63,7 +62,7 @@ public class FragmentRegisterStart extends Fragment implements View.OnClickListe
         final Bundle bundle = new Bundle();
         bundle.putString(TAG_EMAIL,email);
         bundle.putString(TAG_PASSWORD, password);
-        if (!isNakersConnected && checkBoxIsNakers.isChecked()) {
+        if (!((MainActivity) getActivity()).isNakersConnected && checkBoxIsNakers.isChecked()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Хотите подключить Nakers прямо сейчас?");
             builder.setPositiveButton("ОК", new DialogInterface.OnClickListener() {

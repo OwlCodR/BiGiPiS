@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -51,28 +53,29 @@ import static com.bigipis.bigipis.FragmentProfileTabs.USER_NAME;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+
+    final private int PERMISSION_CODE = 1;
 
     public static User user;
-    public static FirebaseAuth firebaseAuth;
-    public static FirebaseFirestore fDatabase;
-    private static ConstraintLayout constraintLayoutEntry;
-    private static ConstraintLayout constraintLayoutUser;
+    public FirebaseFirestore fDatabase;
+    public BluetoothService service;
+    public GoogleMap googleMap;
+    public boolean isNakersConnected;
+    //public static TextView textViewBattery;
+    //public static TextView textViewStick;
+    //private String API_KEY = getResources().getString(R.string.google_api_key);
+
+    private FirebaseAuth firebaseAuth;
+    private ConstraintLayout constraintLayoutEntry;
+    private ConstraintLayout constraintLayoutUser;
     private LinearLayout linearLayoutNavHeader;
     private DrawerLayout drawer;
-    public static ImageView imageViewNakersConnected;
-    public static TextView textViewNickname;
-    private static ProgressBar progressBarHeader;
-    //public static TextView textViewBattery;
-    public static TextView textViewRating;
-    //public static TextView textViewStick;
-    public static ImageView imageViewIcon;
-    public static BluetoothService service;
-    //private String API_KEY = getResources().getString(R.string.google_api_key);
-    private int width;
-    final private int PERMISSION_CODE = 1;
-    public static boolean isNakersConnected;
-
+    private ProgressBar progressBarHeader;
+    private ImageView imageViewIcon;
+    private TextView textViewRating;
+    private TextView textViewNickname;
+    private ImageView imageViewNakersConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,15 +151,22 @@ public class MainActivity extends AppCompatActivity
 
     private void startMap() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.google_map_fragment);
-        if (mapFragment == null) {
+        try {
+            SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.google_map_fragment);
             mapFragment = SupportMapFragment.newInstance();
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame, mapFragment)
+                    .add(R.id.content_frame, new FragmentMap())
                     .addToBackStack(null)
                     .commit();
+            mapFragment.getMapAsync(this);
+        } catch (Exception e) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.content_frame, new FragmentError())
+                    .addToBackStack(null)
+                    .commit();
+            Log.e("ERROR", e.getMessage());
         }
-        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -176,7 +186,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem sign = menu.findItem(R.id.action_sign);
         MenuItem exit = menu.findItem(R.id.action_exit);
-        if (firebaseAuth.getCurrentUser() != null) {
+        if (isUserSignedIn()) {
             sign.setVisible(false);
             exit.setVisible(true);
         } else {
@@ -200,7 +210,6 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new FragmentSignTabs();
         if (id == R.id.action_settings) {
-
             fragment = new FragmentSettings();
         } else if (id == R.id.action_sign) {
             fragment = new FragmentSignTabs();
@@ -223,31 +232,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            if (firebaseAuth.getCurrentUser() == null) {
-                LayoutInflater inflater = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
-                View layout = inflater.inflate(R.layout.dialog_access_error, (ViewGroup) findViewById(R.id.linearLayoutAccessError));
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setView(layout);
-
-                builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragment = new FragmentSignTabs();
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.content_frame, fragment);
-                        ft.addToBackStack(null);
-                        ft.commit();
-                    }
-                }).create();
-            } else {
+            if (isUserSignedIn()) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
                 Bundle bundle = new Bundle();
@@ -259,6 +244,30 @@ public class MainActivity extends AppCompatActivity
                 ft.replace(R.id.content_frame, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
+            } else {
+                LayoutInflater inflater = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+                View layout = inflater.inflate(R.layout.dialog_access_error, (ViewGroup) findViewById(R.id.linearLayoutAccessError));
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setView(layout);
+
+                builder.setNegativeButton("Позже", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Fragment fragment = new FragmentSignTabs();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.content_frame, fragment);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                }).create().show();
             }
         } else if (id == R.id.nav_routes) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -267,17 +276,7 @@ public class MainActivity extends AppCompatActivity
             ft.addToBackStack(null);
             ft.commit();
         } else if (id == R.id.nav_map) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.google_map_fragment);
-            if (mapFragment == null) {
-                mapFragment = SupportMapFragment.newInstance();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.content_frame, mapFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
-            mapFragment.getMapAsync(this);
-
+            startMap();
         } else if (id == R.id.nav_settings) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment fragment = new FragmentSettings();
@@ -302,19 +301,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         // HeaderClick
-        if (constraintLayoutEntry.getVisibility() == View.VISIBLE) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        drawer.closeDrawer(GravityCompat.START);
+        if (isUserSignedIn()) {
             Fragment fragment = new FragmentSignTabs();
-            ft.replace(R.id.content_frame, fragment);
-            ft.addToBackStack(null);
-            ft.commit();
-            drawer.closeDrawer(GravityCompat.START);
+            ft.replace(R.id.content_frame, fragment)
+                    .addToBackStack(null)
+                    .commit();
         } else {
-            // @TODO Start Fragment Profile
+            Fragment fragment = new FragmentProfileTabs();
+            ft.replace(R.id.content_frame, fragment)
+                    .addToBackStack(null)
+                    .commit();
         }
     }
 
-    public static void updateUI() {
+    public boolean isUserSignedIn() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
+    }
+
+    public void updateUI() {
         firebaseAuth = FirebaseAuth.getInstance();
 
         if (isNakersConnected)
@@ -322,79 +328,68 @@ public class MainActivity extends AppCompatActivity
         else
             imageViewNakersConnected.setVisibility(View.GONE);
 
-        if (firebaseAuth.getCurrentUser() == null) {
-            constraintLayoutEntry.setVisibility(View.VISIBLE);
-            constraintLayoutUser.setVisibility(View.GONE);
-        } else {
+        if (isUserSignedIn()) {
             user.setUid(firebaseAuth.getUid());
 
             fDatabase = FirebaseFirestore.getInstance();
-            Log.i("User", firebaseAuth.getUid());
-            Log.i("User", firebaseAuth.getCurrentUser().getUid());
+            Log.i("INFO", firebaseAuth.getUid());
+            Log.i("INFO", firebaseAuth.getCurrentUser().getUid());
             if (fDatabase != null) {
                 DocumentReference docRef = fDatabase.collection("users").document(Objects.requireNonNull(user.getUid()));
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    user = documentSnapshot.toObject(User.class);
+                        user = documentSnapshot.toObject(User.class);
 
-                    if (user != null) {
-                        Log.i("User", "Info successfully has been getted!");
+                        if (user != null) {
+                            Log.i("INFO", "Info successfully has been got!");
 
-                        textViewNickname.setText(user.getNickname());
-                        textViewRating.setText("Рейтинг: " + user.getRating());
+                            textViewNickname.setText(user.getNickname());
+                            textViewRating.setText("Рейтинг: " + user.getRating());
 
-                        imageViewIcon.setVisibility(View.VISIBLE);
-                        progressBarHeader.setVisibility(View.GONE);
-                        switch (user.getIconId()) {
-                            case 1: {
-                                imageViewIcon.setImageResource(R.mipmap.default_user_ico_1);
-                                break;
+                            imageViewIcon.setVisibility(View.VISIBLE);
+                            progressBarHeader.setVisibility(View.GONE);
+                            switch (user.getIconId()) {
+                                case 1: {
+                                    imageViewIcon.setImageResource(R.mipmap.default_user_ico_1);
+                                    break;
+                                }
+                                case 2: {
+                                    imageViewIcon.setImageResource(R.mipmap.default_user_ico_2);
+                                    break;
+                                }
+                                case 3: {
+                                    imageViewIcon.setImageResource(R.mipmap.default_user_ico_3);
+                                    break;
+                                }
+                                case 4: {
+                                    imageViewIcon.setImageResource(R.mipmap.default_user_ico_4);
+                                    break;
+                                }
+                                case 5: {
+                                    imageViewIcon.setImageResource(R.mipmap.default_user_ico_5);
+                                    break;
+                                }
+                                case 6: {
+                                    imageViewIcon.setImageResource(R.mipmap.default_user_ico_6);
+                                    break;
+                                }
                             }
-                            case 2: {
-                                imageViewIcon.setImageResource(R.mipmap.default_user_ico_2);
-                                break;
-                            }
-                            case 3: {
-                                imageViewIcon.setImageResource(R.mipmap.default_user_ico_3);
-                                break;
-                            }
-                            case 4: {
-                                imageViewIcon.setImageResource(R.mipmap.default_user_ico_4);
-                                break;
-                            }
-                            case 5: {
-                                imageViewIcon.setImageResource(R.mipmap.default_user_ico_5);
-                                break;
-                            }
-                            case 6: {
-                                imageViewIcon.setImageResource(R.mipmap.default_user_ico_6);
-                                break;
-                            }
+                        } else {
+                            Log.e("ERROR", "user == null");
+                            user = new User();
+                            imageViewIcon.setVisibility(View.INVISIBLE);
+                            progressBarHeader.setVisibility(View.VISIBLE);
                         }
-                    } else {
-                        Log.i("User", "user == null");
-                        user = new User();
-                        imageViewIcon.setVisibility(View.INVISIBLE);
-                        progressBarHeader.setVisibility(View.VISIBLE);
                     }
-                }
-            });
+                });
 
-            constraintLayoutEntry.setVisibility(View.GONE);
-            constraintLayoutUser.setVisibility(View.VISIBLE);
-
-            /*
-            if (!user.getSerial_S().equals("") || !user.getSerial_W().equals("")) {
-                textVhaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaewStick.setVisibility(View.VISIBLE);
-                textViewBattery.setVisibility(View.VISIBLE);
-                textViewBattery.setText("Батарея: " + user.getBattery());
-            } else {
-                textViewBattery.setVisibility(View.GONE);
-                textViewStick.setVisibility(View.GONE);
+                constraintLayoutEntry.setVisibility(View.GONE);
+                constraintLayoutUser.setVisibility(View.VISIBLE);
             }
-            */
-            }
+        } else {
+            constraintLayoutEntry.setVisibility(View.VISIBLE);
+            constraintLayoutUser.setVisibility(View.GONE);
         }
     }
 
@@ -405,7 +400,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Внимание")
@@ -425,9 +422,12 @@ public class MainActivity extends AppCompatActivity
                     })
                     .create()
                     .show();
-
         }
-        else googleMap.setMyLocationEnabled(true);
+        else {
+            googleMap.setMyLocationEnabled(true);
+            googleMap.setOnMyLocationButtonClickListener(this);
+            googleMap.setOnMyLocationClickListener(this);
+        }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -439,6 +439,17 @@ public class MainActivity extends AppCompatActivity
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 }
 

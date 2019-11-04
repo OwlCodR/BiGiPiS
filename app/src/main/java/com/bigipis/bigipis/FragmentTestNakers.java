@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothWriter;
 
-import static com.bigipis.bigipis.MainActivity.service;
-
 public class FragmentTestNakers extends Fragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
     private View view;
     private SeekBar seekBarPower, seekBarCount, seekBarPause1, seekBarPause2, seekBarPause3, seekBarTime1, seekBarTime2, seekBarTime3;
@@ -64,7 +62,6 @@ public class FragmentTestNakers extends Fragment implements SeekBar.OnSeekBarCha
         linearLayout2 = view.findViewById(R.id.linearLayoutSignal2);
         linearLayout3 = view.findViewById(R.id.linearLayoutSignal3);
 
-        service = BluetoothService.getDefaultInstance();
         return view;
     }
 
@@ -152,7 +149,7 @@ public class FragmentTestNakers extends Fragment implements SeekBar.OnSeekBarCha
             BLUETOOTH_ASK += seekBarTime3.getProgress() + 1;
             BLUETOOTH_ASK += seekBarPause3.getProgress() + 1;
         }
-        BluetoothWriter writer = new BluetoothWriter(service);
+        BluetoothWriter writer = new BluetoothWriter(BluetoothService.getDefaultInstance());
 
         writer.write(BLUETOOTH_ASK);
         //Toast.makeText(getActivity(), "=" + BLUETOOTH_ASK + "=", Toast.LENGTH_LONG).show();

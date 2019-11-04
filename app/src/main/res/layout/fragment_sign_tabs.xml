@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="enterAlways"
-            app:tabIndicatorColor="@color/common_google_signin_btn_text_dark_default">
+            app:tabIndicatorColor="@color/common_google_signin_btn_text_dark_default"
+            app:tabTextColor="@color/cast_expanded_controller_progress_text_color">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabItemLogin"

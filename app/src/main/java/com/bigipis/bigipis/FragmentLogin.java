@@ -21,16 +21,12 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import static com.bigipis.bigipis.MainActivity.updateUI;
-
 public class FragmentLogin extends Fragment implements View.OnClickListener {
     private static final String TAG = "EmailPassword";
 
     private EditText mEmailField;
     private EditText mPasswordField;
     private View myInflatedView;
-
-    private FirebaseAuth firebaseAuth;
     private TextInputLayout textInputLayoutEmail, textInputLayoutPassword;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,14 +51,13 @@ public class FragmentLogin extends Fragment implements View.OnClickListener {
             return;
         }
         showProgressDialog();
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "Login success");
-                            updateUI();
+                            ((MainActivity) getActivity()).updateUI();
                             // @TODO Go somewhere after login
                         } else {
                             Log.e(TAG, "Login fail", task.getException());
@@ -77,12 +72,10 @@ public class FragmentLogin extends Fragment implements View.OnClickListener {
         if (TextUtils.isEmpty(email)) {
             textInputLayoutEmail.setErrorEnabled(true);
             textInputLayoutEmail.setError("Заполните поле");
-            return;
         } else {
             textInputLayoutEmail.setErrorEnabled(false);
             showProgressDialog();
-            firebaseAuth = FirebaseAuth.getInstance();
-            firebaseAuth.sendPasswordResetEmail(email)
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

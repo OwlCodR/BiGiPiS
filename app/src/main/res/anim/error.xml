@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false" >
+
+    <alpha
+        android:duration="3000"
+        android:fromAlpha="0"
+        android:toAlpha="100" />
+    <rotate
+        android:repeatCount="infinite"
+        android:repeatMode="restart"
+        android:duration="1000"
+        android:toDegrees="0"
+        android:fromDegrees="15"
+        android:pivotX="75%"
+        android:pivotY="75%" />
+</set>

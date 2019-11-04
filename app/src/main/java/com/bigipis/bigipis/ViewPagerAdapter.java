@@ -1,5 +1,8 @@
 package com.bigipis.bigipis;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -9,16 +12,24 @@ import java.util.List;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-
+    private Context context;
     private final List<Fragment> mFragmentList = new ArrayList<>();
+    private List<String> tabNamesList = new ArrayList<>();
+    private Fragment fragmentError = new FragmentError();
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    public ViewPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return mFragmentList.get(position);
+        try {
+            return mFragmentList.get(position);
+        } catch (Exception e) {
+            Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_SHORT).show();
+            return fragmentError;
+        }
     }
 
     @Override
@@ -28,10 +39,15 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return null;
+        try {
+            return tabNamesList.get(position);
+        } catch (Exception e) {
+            return "Ошибка";
+        }
     }
 
     public void addFragment(Fragment fragment, String title) {
         mFragmentList.add(fragment);
+        tabNamesList.add(title);
     }
 }

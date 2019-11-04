@@ -1,6 +1,7 @@
 package com.bigipis.bigipis;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,10 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.snackbar.Snackbar;
-
-import static com.bigipis.bigipis.MainActivity.firebaseAuth;
-import static com.bigipis.bigipis.MainActivity.isNakersConnected;
-import static com.bigipis.bigipis.MainActivity.user;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
     private View view;
@@ -38,7 +35,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             case R.id.cardViewTest:
             {
-                if (isNakersConnected) {
+                if (((MainActivity) getActivity()).isNakersConnected) {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment fragment = new FragmentTestNakers();
                     ft.replace(R.id.content_frame, fragment);
@@ -51,7 +48,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
             }
             case  R.id.cardViewConnect:
             {
-                if (!isNakersConnected) {
+                if (!((MainActivity) getActivity()).isNakersConnected) {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment fragment = new FragmentBluetoothList();
                     ft.replace(R.id.content_frame, fragment);
@@ -71,14 +68,20 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         MenuItem sign = menu.findItem(R.id.action_sign);
         MenuItem exit = menu.findItem(R.id.action_exit);
         MenuItem settings = menu.findItem(R.id.action_settings);
-        if (firebaseAuth.getCurrentUser() != null) {
+        try {
+            if (((MainActivity) getActivity()).isUserSignedIn()) {
+                sign.setVisible(false);
+                exit.setVisible(true);
+            } else {
+                sign.setVisible(true);
+                exit.setVisible(false);
+            }
+            settings.setVisible(false);
+        } catch (Exception e) {
             sign.setVisible(false);
-            exit.setVisible(true);
-        } else {
-            sign.setVisible(true);
             exit.setVisible(false);
+            Log.e("ERROR", e.getMessage());
         }
-        settings.setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 }

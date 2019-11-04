@@ -22,10 +22,6 @@ import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothStatus;
 import com.google.android.material.snackbar.Snackbar;
 
-import static com.bigipis.bigipis.MainActivity.isNakersConnected;
-
-import static com.bigipis.bigipis.MainActivity.service;
-
 public class FragmentBluetoothList extends Fragment implements AdapterView.OnItemClickListener, BluetoothService.OnBluetoothScanCallback, BluetoothService.OnBluetoothEventCallback {
     private static final int PERMISSION_REQUEST_CODE = 1;
     private View view;
@@ -33,6 +29,7 @@ public class FragmentBluetoothList extends Fragment implements AdapterView.OnIte
     private ListAdapterBluetooth listAdapterBluetooth;
     private ProgressBar progressBar;
     private TextView textViewNotFound;
+    private BluetoothService service = BluetoothService.getDefaultInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +46,6 @@ public class FragmentBluetoothList extends Fragment implements AdapterView.OnIte
         textViewNotFound = view.findViewById(R.id.textViewBluetoothNotFound);
         textViewNotFound.setVisibility(View.GONE);
 
-        service = BluetoothService.getDefaultInstance();
         setHasOptionsMenu(true);
         // @TODO Getting normal permissions
 
@@ -121,16 +117,16 @@ public class FragmentBluetoothList extends Fragment implements AdapterView.OnIte
     @Override
     public void onStatusChange(BluetoothStatus bluetoothStatus) {
         if (bluetoothStatus == BluetoothStatus.CONNECTING) {
-            isNakersConnected = false;
+            ((MainActivity) getActivity()).isNakersConnected = false;
             Snackbar.make(view, "Подключение...", Snackbar.LENGTH_SHORT).show();
         }
         if (bluetoothStatus == BluetoothStatus.CONNECTED) {
-            isNakersConnected = true;
+            ((MainActivity) getActivity()).isNakersConnected = true;
             Snackbar.make(view, "Вы успешно подключили Nakers!", Snackbar.LENGTH_LONG).show();
             getActivity().getSupportFragmentManager().popBackStack();
         }
         if (bluetoothStatus == BluetoothStatus.NONE) {
-            isNakersConnected = false;
+            ((MainActivity) getActivity()).isNakersConnected = false;
         }
     }
 

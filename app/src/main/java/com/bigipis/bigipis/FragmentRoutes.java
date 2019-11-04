@@ -1,6 +1,5 @@
 package com.bigipis.bigipis;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,9 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.bigipis.bigipis.MainActivity.fDatabase;
 
 public class FragmentRoutes extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private View myInflatedView;
@@ -88,14 +86,13 @@ public class FragmentRoutes extends Fragment implements SwipeRefreshLayout.OnRef
             NEAR_FILTER: data - position (String)
             NO_FILTER: data - null
         */
-        final List<Route> list = null;
-        fDatabase = FirebaseFirestore.getInstance();
+        final List<Route> list = new ArrayList<>();
 
         if (filter != null && data != null && !filter.equals(NO_FILTER)) {
             switch (filter) {
                 case USER_FILTER:
                 {
-                    fDatabase.collection("routes")
+                    FirebaseFirestore.getInstance().collection("routes")
                         .whereEqualTo("user", data.toString())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -126,7 +123,7 @@ public class FragmentRoutes extends Fragment implements SwipeRefreshLayout.OnRef
             }
         }
         else {
-            fDatabase.collection("routes")
+            FirebaseFirestore.getInstance().collection("routes")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

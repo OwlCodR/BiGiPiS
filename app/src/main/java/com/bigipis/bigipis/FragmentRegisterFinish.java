@@ -36,9 +36,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
-import static com.bigipis.bigipis.MainActivity.fDatabase;
-import static com.bigipis.bigipis.MainActivity.firebaseAuth;
-import static com.bigipis.bigipis.MainActivity.updateUI;
 import static com.bigipis.bigipis.MainActivity.user;
 
 public class FragmentRegisterFinish extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener  {
@@ -119,16 +116,20 @@ public class FragmentRegisterFinish extends Fragment implements View.OnClickList
         String password = bundle.getString(TAG_PASSWORD);
 
         if (email != null && password != null) {
-            firebaseAuth = FirebaseAuth.getInstance();
+            final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "Account has been created");
-                                fDatabase = FirebaseFirestore.getInstance();
-                                fDatabase.collection("users").document(firebaseAuth.getUid()).set(user);
-                                updateUI();
+                                FirebaseFirestore fDatabase = FirebaseFirestore.getInstance();
+                                try {
+                                    fDatabase.collection("users").document(Objects.requireNonNull(firebaseAuth.getUid())).set(user);
+                                    ((MainActivity) getActivity()).updateUI();
+                                } catch (Exception e) {
+                                    Log.e("ERROR", e.getMessage());
+                                }
                                 // @TODO Go somewhere after registration
                             } else {
                                 Toast.makeText(getActivity(), Objects.requireNonNull(task.getException()).getMessage() + "", Toast.LENGTH_LONG).show();
@@ -141,9 +142,8 @@ public class FragmentRegisterFinish extends Fragment implements View.OnClickList
     }
 
     private boolean isNicknameOriginal(String nickname) {
-        final boolean[] valid = {true};
-        fDatabase = FirebaseFirestore.getInstance();
-        CollectionReference docRef = fDatabase.collection("users");
+        final boolean[] valid = new boolean[1];
+        CollectionReference docRef = FirebaseFirestore.getInstance().collection("users");
         docRef.whereEqualTo("nickname", nickname)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

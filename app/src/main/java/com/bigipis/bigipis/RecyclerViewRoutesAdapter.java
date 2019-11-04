@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,15 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static com.bigipis.bigipis.MainActivity.fDatabase;
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerViewRoutesAdapter.ViewHolderRoutes> implements View.OnClickListener {
 
-    Context context;
-    LayoutInflater inflater;
-    List<Route> routesList;
+    private Context context;
+    private LayoutInflater inflater;
+    private List<Route> routesList;
 
     RecyclerViewRoutesAdapter(Context context, List<Route> routesList) {
         this.context = context;
@@ -95,8 +91,8 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
                 // Update Recycler Item
 
                 // Update Database
-                fDatabase = FirebaseFirestore.getInstance();
-                DocumentReference docRef = fDatabase.collection("routes").document(itemRoute.getUser().getUid());
+                final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                DocumentReference docRef = firestore.collection("routes").document(itemRoute.getUser().getUid());
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -105,7 +101,7 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
                         route.setRating(route.getRating() - 1);
                         data.put("rating", route.getRating());
 
-                        fDatabase.collection("routes").document(itemRoute.getUser().getUid())
+                        firestore.collection("routes").document(itemRoute.getUser().getUid())
                                 .set(data)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -129,8 +125,8 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
         holder.imageButtonLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fDatabase = FirebaseFirestore.getInstance();
-                DocumentReference docRef = fDatabase.collection("routes").document(itemRoute.getUser().getUid());
+                final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                DocumentReference docRef = firestore.collection("routes").document(itemRoute.getUser().getUid());
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -138,7 +134,7 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
                         Map<String, Object> data = new HashMap<>();
                         route.setRating(route.getRating() + 1);
                         data.put("rating", route.getRating());
-                        fDatabase.collection("routes").document(itemRoute.getUser().getUid())
+                        firestore.collection("routes").document(itemRoute.getUser().getUid())
                                 .set(data)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
