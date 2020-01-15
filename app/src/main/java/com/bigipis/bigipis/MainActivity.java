@@ -32,6 +32,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bigipis.bigipis.authentication.FragmentSignTabs;
+import com.bigipis.bigipis.map.FragmentMapMainMenu;
+import com.bigipis.bigipis.menu.FragmentDeveloper;
+import com.bigipis.bigipis.menu.FragmentSettings;
+import com.bigipis.bigipis.profile.FragmentProfileTabs;
+import com.bigipis.bigipis.route.FragmentRoutes;
+import com.bigipis.bigipis.source.User;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothClassicService;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothConfiguration;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
@@ -48,15 +55,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.bigipis.bigipis.FragmentProfileTabs.USER_ID;
-import static com.bigipis.bigipis.FragmentProfileTabs.USER_NAME;
+import static com.bigipis.bigipis.profile.FragmentProfileTabs.USER_ID;
+import static com.bigipis.bigipis.profile.FragmentProfileTabs.USER_NAME;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     final private int PERMISSION_CODE = 1;
-
+    final public static String FRAGMENT_TAG = "MAP_FRAGMENT";
     public static User user;
     public FirebaseFirestore fDatabase;
     public BluetoothService service;
@@ -152,11 +159,10 @@ public class MainActivity extends AppCompatActivity
     private void startMap() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.google_map_fragment);
-            mapFragment = SupportMapFragment.newInstance();
+            SupportMapFragment mapFragment = SupportMapFragment.newInstance();
             fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, mapFragment)
-                    .add(R.id.content_frame, new FragmentMap())
+                    .replace(R.id.content_frame, mapFragment, FRAGMENT_TAG)
+                    .add(R.id.content_frame, new FragmentMapMainMenu())
                     .addToBackStack(null)
                     .commit();
             mapFragment.getMapAsync(this);
@@ -245,29 +251,7 @@ public class MainActivity extends AppCompatActivity
                 ft.addToBackStack(null);
                 ft.commit();
             } else {
-                LayoutInflater inflater = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
-                View layout = inflater.inflate(R.layout.dialog_access_error, (ViewGroup) findViewById(R.id.linearLayoutAccessError));
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setView(layout);
-
-                builder.setNegativeButton("Позже", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Fragment fragment = new FragmentSignTabs();
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.content_frame, fragment);
-                        ft.addToBackStack(null);
-                        ft.commit();
-                    }
-                }).create().show();
+                showDialogAccessError();
             }
         } else if (id == R.id.nav_routes) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -304,12 +288,12 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         drawer.closeDrawer(GravityCompat.START);
         if (isUserSignedIn()) {
-            Fragment fragment = new FragmentSignTabs();
+            Fragment fragment = new FragmentProfileTabs();
             ft.replace(R.id.content_frame, fragment)
                     .addToBackStack(null)
                     .commit();
         } else {
-            Fragment fragment = new FragmentProfileTabs();
+            Fragment fragment = new FragmentSignTabs();
             ft.replace(R.id.content_frame, fragment)
                     .addToBackStack(null)
                     .commit();
@@ -393,6 +377,34 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void showDialogAccessError() {
+        LayoutInflater inflater = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+        View layout = inflater.inflate(R.layout.dialog_access_error, (ViewGroup) findViewById(R.id.linearLayoutAccessError));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(layout);
+
+        builder.setNegativeButton("Позже", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Fragment fragment = new FragmentSignTabs();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        })
+                .create()
+                .show();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -404,24 +416,7 @@ public class MainActivity extends AppCompatActivity
         googleMap = map;
         googleMap.getUiSettings().setMapToolbarEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Внимание")
-                    .setMessage("Для работы карты необходимо разрешение о местоположении устройства!\nЭти данные используются исключительно для вашей навигации!")
-                    .setCancelable(true)
-                    .setNegativeButton("Нет, мне не нужна карта", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(MainActivity.this, "Очень жаль, теперь карта не работает!\nНо вы всё еще можете дать разрешение в настройках", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_CODE);
-                        }
-                    })
-                    .create()
-                    .show();
+            showDialogMapPermission();
         }
         else {
             googleMap.setMyLocationEnabled(true);
@@ -429,6 +424,28 @@ public class MainActivity extends AppCompatActivity
             googleMap.setOnMyLocationClickListener(this);
         }
     }
+
+    public void showDialogMapPermission() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Внимание")
+                .setMessage("Для работы карты необходимо разрешение о местоположении устройства!\nЭти данные используются исключительно для вашей навигации!")
+                .setCancelable(true)
+                .setNegativeButton("Нет, мне не нужна карта", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(MainActivity.this, "Очень жаль, теперь карта не работает!\nНо вы всё еще можете дать разрешение в настройках", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_CODE);
+                    }
+                })
+                .create()
+                .show();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSION_CODE && permissions.length == 1) {

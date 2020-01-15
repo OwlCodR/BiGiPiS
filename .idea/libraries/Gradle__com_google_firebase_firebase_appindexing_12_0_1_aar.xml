@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.firebase:firebase-appindexing:12.0.1@aar">
     <CLASSES>
-      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/1a2713e6c778bb2af415ad7eef04d9fa/res" />
       <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/1a2713e6c778bb2af415ad7eef04d9fa/jars/classes.jar!/" />
+      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/1a2713e6c778bb2af415ad7eef04d9fa/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

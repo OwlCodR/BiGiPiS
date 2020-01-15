@@ -191,7 +191,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Program_Files/Android/AndroidStudio4.0/plugins/android/lib/android.jar!/images/material_design_icons/hardware/ic_keyboard_arrow_down_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/Program_Files/Android/AndroidStudio4.0/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_location_on_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -201,9 +201,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="747474" />
-                            <entry key="outputName" value="ic_keyboard_arrow_down_black_24dp" />
-                            <entry key="overrideSize" value="true" />
+                            <entry key="color" value="3498db" />
+                            <entry key="opacityPercent" value="90" />
+                            <entry key="outputName" value="ic_location_blue_52dp" />
                             <entry key="sourceFile" value="C:\Users\Максим\Downloads\BiGiPiS\Icons\Release\logo.svg" />
                           </map>
                         </option>

@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:paddingTop="10dp"
-        android:text="Вы должны войти в аккаунт для того, чтобы просматривать этот раздел. Хотите войти или зарегистрироваться прямо сейчас?"
+        android:text="Вы должны войти в аккаунт для того, чтобы воспользоваться этим. Хотите войти или зарегистрироваться прямо сейчас?"
         android:textColor="@color/colorPrimaryLight"
         android:textSize="16sp" />
 </LinearLayout>

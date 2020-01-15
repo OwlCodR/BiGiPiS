@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonNewMarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="10dp"
+        android:alpha="0.8"
+        android:clickable="true"
+        app:backgroundTint="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
+        app:fabSize="mini"
+        app:srcCompat="@mipmap/routes" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonStartFinish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="115dp"
+        android:layout_marginEnd="10dp"
+        android:alpha="0.8"
+        android:clickable="true"
+        app:backgroundTint="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
+        app:fabSize="mini"
+        app:maxImageSize="20dp"
+        app:srcCompat="@drawable/ic_add" />
+
+</RelativeLayout>
