@@ -20,18 +20,17 @@ import androidx.fragment.app.Fragment;
 
 import com.bigipis.bigipis.MainActivity;
 import com.bigipis.bigipis.R;
-import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothStatus;
 import com.google.android.material.snackbar.Snackbar;
 
-public class FragmentBluetoothList extends Fragment implements AdapterView.OnItemClickListener, BluetoothService.OnBluetoothScanCallback, BluetoothService.OnBluetoothEventCallback {
+public class FragmentBluetoothList extends Fragment implements AdapterView.OnItemClickListener, BluetoothLeService.OnBluetoothScanCallback, BluetoothLeService.OnBluetoothEventCallback {
     private static final int PERMISSION_REQUEST_CODE = 1;
     private View view;
     private ListView listViewDevices;
     private ListAdapterBluetooth listAdapterBluetooth;
     private ProgressBar progressBar;
     private TextView textViewNotFound;
-    private BluetoothService bluetoothService = BluetoothService.getDefaultInstance();
+    private BluetoothLeService bluetoothService = (BluetoothLeService) BluetoothLeService.getDefaultInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class FragmentBluetoothList extends Fragment implements AdapterView.OnIte
         textViewNotFound.setVisibility(View.GONE);
 
         setHasOptionsMenu(true);
-        // @TODO Getting normal permissions
 
         int permissionStatus = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.BLUETOOTH);
 
@@ -118,17 +116,21 @@ public class FragmentBluetoothList extends Fragment implements AdapterView.OnIte
 
     @Override
     public void onStatusChange(BluetoothStatus bluetoothStatus) {
-        if (bluetoothStatus == BluetoothStatus.CONNECTING) {
-            ((MainActivity) getActivity()).isNakersConnected = false;
-            Snackbar.make(view, "Подключение...", Snackbar.LENGTH_SHORT).show();
-        }
-        if (bluetoothStatus == BluetoothStatus.CONNECTED) {
-            ((MainActivity) getActivity()).isNakersConnected = true;
-            Snackbar.make(view, "Вы успешно подключили Nakers!", Snackbar.LENGTH_LONG).show();
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
-        if (bluetoothStatus == BluetoothStatus.NONE) {
-            ((MainActivity) getActivity()).isNakersConnected = false;
+        try {
+            if (bluetoothStatus == BluetoothStatus.CONNECTING) {
+                ((MainActivity) getActivity()).isLacersConnected = false;
+                Snackbar.make(view, "Подключение...", Snackbar.LENGTH_SHORT).show();
+            }
+            if (bluetoothStatus == BluetoothStatus.CONNECTED) {
+                ((MainActivity) getActivity()).isLacersConnected = true;
+                Snackbar.make(view, "Вы успешно подключили Lacers!", Snackbar.LENGTH_LONG).show();
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+            if (bluetoothStatus == BluetoothStatus.NONE) {
+                ((MainActivity) getActivity()).isLacersConnected = false;
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
         }
     }
 

@@ -11,14 +11,14 @@ public class User {
     private int likes;
     private int dislikes;
     private int rating;
-    //private int battery;           // %
-    private String serial_S;       // S|1|000001
-    private String serial_W;       // W|1|000001
+    private int battery;           // %
     private String uid;
+    private String jsonRoutes;
+    private boolean tutorialCompleted;
 
     public User(int weight, int height, String nickname, int iconId, double allDistance,
                 double maxDistance, double maxSpeed, int likes, int dislikes, int rating,
-                String serial_S, String serial_W, String uid) {
+                String uid, int battery, String jsonRoutes, boolean tutorialCompleted) {
         this.weight = weight;
         this.height = height;
         this.nickname = nickname;
@@ -29,9 +29,10 @@ public class User {
         this.likes = likes;
         this.dislikes = dislikes;
         this.rating = rating;
-        this.serial_S = serial_S;
-        this.serial_W = serial_W;
         this.uid = uid;
+        this.battery = battery;
+        this.jsonRoutes = jsonRoutes;
+        this.tutorialCompleted = tutorialCompleted;
     }
 
     public User(){
@@ -45,10 +46,9 @@ public class User {
         this.dislikes = 0;
         this.rating = 0;
         this.iconId = 0;
-        this.serial_S = "";
-        this.serial_W = "";
         this.uid = null;
-        //this.battery = 0;
+        this.battery = 0;
+        this.jsonRoutes = null;
     }
 
     /*
@@ -166,20 +166,28 @@ public class User {
         this.rating = rating;
     }
 
-    public String getSerial_S() {
-        return serial_S;
+    public int getBattery() {
+        return battery;
     }
 
-    public void setSerial_S(String serial_S) {
-        this.serial_S = serial_S;
+    public void setBattery(int battery) {
+        this.battery = battery;
     }
 
-    public String getSerial_W() {
-        return serial_W;
+    public String getJsonRoutes() {
+        return jsonRoutes;
     }
 
-    public void setSerial_W(String serial_W) {
-        this.serial_W = serial_W;
+    public void setJsonRoutes(String jsonRoutes) {
+        this.jsonRoutes = jsonRoutes;
+    }
+
+    public boolean isTutorialCompleted() {
+        return tutorialCompleted;
+    }
+
+    public void setTutorialCompleted(boolean tutorialCompleted) {
+        this.tutorialCompleted = tutorialCompleted;
     }
 
     /*

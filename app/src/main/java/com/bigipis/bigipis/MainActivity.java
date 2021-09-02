@@ -2,9 +2,15 @@ package com.bigipis.bigipis;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +26,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,18 +38,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bigipis.bigipis.authentication.FragmentSignTabs;
+import com.bigipis.bigipis.bluetooth.BluetoothLeService;
 import com.bigipis.bigipis.map.FragmentMapMainMenu;
 import com.bigipis.bigipis.menu.FragmentDeveloper;
 import com.bigipis.bigipis.menu.FragmentSettings;
 import com.bigipis.bigipis.profile.FragmentProfileTabs;
 import com.bigipis.bigipis.route.FragmentRoutes;
+import com.bigipis.bigipis.source.SQLiteHelper;
 import com.bigipis.bigipis.source.User;
-import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothClassicService;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothConfiguration;
-import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,22 +63,28 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.bigipis.bigipis.profile.FragmentProfileTabs.USER_ICON_ID;
 import static com.bigipis.bigipis.profile.FragmentProfileTabs.USER_ID;
 import static com.bigipis.bigipis.profile.FragmentProfileTabs.USER_NAME;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, OnMapReadyCallback {
 
     final private int PERMISSION_CODE = 1;
     final public static String FRAGMENT_TAG = "MAP_FRAGMENT";
     public static User user;
     public FirebaseFirestore fDatabase;
-    public BluetoothService service;
+    public SQLiteHelper sqLiteHelper;
     public GoogleMap googleMap;
-    public boolean isNakersConnected;
-    //public static TextView textViewBattery;
-    //public static TextView textViewStick;
+    public boolean isLacersConnected;
+    public ImageView imageViewBattery;
+    public static int batteryState;
+    // 3 - 100%
+    // 2 - 60%
+    // 1 - 20%
+    // 0 - Unknown
+    private TextView textViewStick;
     //private String API_KEY = getResources().getString(R.string.google_api_key);
 
     private FirebaseAuth firebaseAuth;
@@ -82,7 +96,8 @@ public class MainActivity extends AppCompatActivity
     private ImageView imageViewIcon;
     private TextView textViewRating;
     private TextView textViewNickname;
-    private ImageView imageViewNakersConnected;
+    private ImageView imageViewLacersConnected;
+    private boolean isCameraSetOnce; // Just a flag to set camera only 1
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +107,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         user = new User();
+        isLacersConnected = false;
+        isCameraSetOnce = false;
+        batteryState = 0;
+        sqLiteHelper = new SQLiteHelper(this);
 
         setDrawer(toolbar);
 
@@ -118,7 +137,7 @@ public class MainActivity extends AppCompatActivity
                         updateUI();
                     }
                 }
-                return true; //@TODO True or false
+                return true;
             }
         });
     }
@@ -132,31 +151,37 @@ public class MainActivity extends AppCompatActivity
         progressBarHeader = headerView.findViewById(R.id.progressBarHeader);
         //textViewBattery = headerView.findViewById(R.id.textViewNavBattery);
         textViewRating = headerView.findViewById(R.id.textViewNavRating);
-        //textViewStick = headerView.findViewById(R.id.textViewNavStick);
+        imageViewBattery = headerView.findViewById(R.id.imageViewBattery);
+        textViewStick = headerView.findViewById(R.id.textViewNavStick);
         imageViewIcon = headerView.findViewById(R.id.imageViewNavUserIcon);
         constraintLayoutEntry = headerView.findViewById(R.id.layoutEntry);
         constraintLayoutUser = headerView.findViewById(R.id.layoutUser);
         linearLayoutNavHeader = headerView.findViewById(R.id.linearNavHeader);
-        imageViewNakersConnected = headerView.findViewById(R.id.imageViewNakersConnected);
-        imageViewNakersConnected.setVisibility(View.GONE);
+        imageViewLacersConnected = headerView.findViewById(R.id.imageViewLacersConnected);
+        imageViewLacersConnected.setVisibility(View.GONE);
 
         linearLayoutNavHeader.setOnClickListener(this);
     }
 
     private void setBluetoothConfig() {
         BluetoothConfiguration config = new BluetoothConfiguration();
-        config.context = this;
-        config.bluetoothServiceClass = BluetoothClassicService.class;
+        config.context = getApplicationContext();
+        config.bluetoothServiceClass = BluetoothLeService.class;
         config.bufferSize = 1024;
         config.characterDelimiter = '\n';
         config.deviceName = "BiGiPiS";
         config.callListenersInMainThread = true;
-        config.uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-        BluetoothService.init(config);
-        service = BluetoothService.getDefaultInstance();
+
+        config.uuidService = UUID.fromString("00001523-be61-11e7-8f1a-0800200c9a66"); // Required
+        config.uuidCharacteristic = UUID.fromString("00001524-be61-11e7-8f1a-0800200c9a66"); // Required
+        config.transport = BluetoothDevice.TRANSPORT_LE; // Required for dual-mode devices
+        //config.uuid = UUID.fromString(null); // Used to filter found devices. Set null to find all devices.
+
+        BluetoothLeService.init(config);
     }
 
     private void startMap() {
+        isCameraSetOnce = false;
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
             SupportMapFragment mapFragment = SupportMapFragment.newInstance();
@@ -214,7 +239,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = new FragmentSignTabs();
+        Fragment fragment = null;
         if (id == R.id.action_settings) {
             fragment = new FragmentSettings();
         } else if (id == R.id.action_sign) {
@@ -225,9 +250,11 @@ public class MainActivity extends AppCompatActivity
             fragment = new FragmentSignTabs();
         }
 
-        ft.replace(R.id.content_frame, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        if (fragment != null) {
+            ft.replace(R.id.content_frame, fragment);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -242,8 +269,9 @@ public class MainActivity extends AppCompatActivity
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
                 Bundle bundle = new Bundle();
-                bundle.putString(USER_ID, firebaseAuth.getUid());
+                bundle.putString(USER_ID, firebaseAuth.getCurrentUser().getUid());
                 bundle.putString(USER_NAME, user.getNickname());
+                bundle.putInt(USER_ICON_ID, user.getIconId());
 
                 Fragment fragment = new FragmentProfileTabs();
                 fragment.setArguments(bundle);
@@ -288,7 +316,13 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         drawer.closeDrawer(GravityCompat.START);
         if (isUserSignedIn()) {
+            Bundle bundle = new Bundle();
+            bundle.putString(USER_ID, firebaseAuth.getCurrentUser().getUid());
+            bundle.putString(USER_NAME, user.getNickname());
+            bundle.putInt(USER_ICON_ID, user.getIconId());
+
             Fragment fragment = new FragmentProfileTabs();
+            fragment.setArguments(bundle);
             ft.replace(R.id.content_frame, fragment)
                     .addToBackStack(null)
                     .commit();
@@ -300,6 +334,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void setBatteryImage() {
+        if (batteryState == 1) {
+            imageViewBattery.setImageResource(R.drawable.ic_battery_20_white_24dp);
+        } else if (batteryState == 2) {
+            imageViewBattery.setImageResource(R.drawable.ic_battery_60_white_24dp);
+        } else if (batteryState == 3) {
+            imageViewBattery.setImageResource(R.drawable.ic_battery_full_white_24dp);
+        } else {
+            imageViewBattery.setImageResource(R.drawable.ic_battery_unknown_white_24dp);
+            Log.e("BATTERY", "Something wrong with battery data! Battery = " + batteryState);
+        }
+    }
+
     public boolean isUserSignedIn() {
         return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
@@ -307,17 +354,25 @@ public class MainActivity extends AppCompatActivity
     public void updateUI() {
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if (isNakersConnected)
-            imageViewNakersConnected.setVisibility(View.VISIBLE);
-        else
-            imageViewNakersConnected.setVisibility(View.GONE);
+        if (isLacersConnected) {
+            imageViewLacersConnected.setVisibility(View.VISIBLE);
+            imageViewBattery.setVisibility(View.VISIBLE);
+            textViewStick.setVisibility(View.VISIBLE);
+
+            setBatteryImage();
+        }
+        else {
+            imageViewLacersConnected.setVisibility(View.GONE);
+            imageViewBattery.setVisibility(View.GONE);
+            textViewStick.setVisibility(View.GONE);
+        }
 
         if (isUserSignedIn()) {
-            user.setUid(firebaseAuth.getUid());
+            user.setUid(firebaseAuth.getCurrentUser().getUid());
 
             fDatabase = FirebaseFirestore.getInstance();
-            Log.i("INFO", firebaseAuth.getUid());
-            Log.i("INFO", firebaseAuth.getCurrentUser().getUid());
+            Log.i("INFO", firebaseAuth.getCurrentUser().getUid());   // Similar
+            Log.i("INFO", firebaseAuth.getCurrentUser().getUid()); // Similar
             if (fDatabase != null) {
                 DocumentReference docRef = fDatabase.collection("users").document(Objects.requireNonNull(user.getUid()));
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -414,14 +469,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             showDialogMapPermission();
         }
         else {
+            googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                @Override
+                public void onMyLocationChange(Location arg0) {
+                    if (!isCameraSetOnce) {
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(arg0.getLatitude(), arg0.getLongitude()), 17);
+                        googleMap.animateCamera(cameraUpdate);
+                        isCameraSetOnce = true;
+                    }
+                }
+            });
+
             googleMap.setMyLocationEnabled(true);
-            googleMap.setOnMyLocationButtonClickListener(this);
-            googleMap.setOnMyLocationClickListener(this);
+            googleMap.setMaxZoomPreference(20f);
+            //googleMap.setOnMyLocationClickListener(this);
         }
     }
 
@@ -450,24 +516,11 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSION_CODE && permissions.length == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Разрешение успешно получено!\n", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Разрешение успешно получено!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MainActivity.this, "Очень жаль, теперь карта не работает!\nНо вы всё еще можете дать разрешение в настройках", Toast.LENGTH_LONG).show();
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
-    }
 }
-
-// @TODO Do normal start check if user != null and do nav_header

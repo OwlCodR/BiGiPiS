@@ -60,7 +60,6 @@ public class FragmentLogin extends Fragment implements View.OnClickListener {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "Login success");
                             ((MainActivity) getActivity()).updateUI();
-                            // @TODO Go somewhere after login
                         } else {
                             Log.e(TAG, "Login fail", task.getException());
                             Toast.makeText(getActivity(), "Не удалось войти!\nПроверьте подкючение к сети", Toast.LENGTH_LONG).show();

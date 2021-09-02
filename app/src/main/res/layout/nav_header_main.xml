@@ -68,8 +68,8 @@
 
         <ImageView
             android:id="@+id/imageViewNavUserIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -107,9 +107,8 @@
             app:layout_constraintStart_toStartOf="@+id/imageViewFrame"
             app:layout_constraintTop_toTopOf="@+id/imageViewFrame"
             app:layout_constraintVertical_bias="0.75" />
-            <!-- Api 21+ indeterminateTint-->
-            <!-- @TODO Change Color of progressBar -->
-            <!-- @TODO Пофиксить Изменение положения при загрузке -->
+        <!-- Api 21+ indeterminateTint-->
+        <!-- @TODO Change Color of progressBar -->
 
 
 
@@ -141,7 +140,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageView
-                android:id="@+id/imageViewNakersConnected"
+                android:id="@+id/imageViewLacersConnected"
                 android:layout_width="25dp"
                 android:layout_height="23dp"
                 android:layout_marginStart="10dp"
@@ -169,26 +168,31 @@
                     android:id="@+id/textViewNavRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="40dp"
                     android:layout_weight="0"
                     android:text="@string/loadingText"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/textViewNavStick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
                     android:layout_weight="0"
                     android:text="  |  "
                     android:textColor="@android:color/white"
+                    android:textSize="18sp"
                     android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/textViewNavBattery"
+                <ImageView
+                    android:id="@+id/imageViewBattery"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
                     android:layout_weight="0"
-                    android:textColor="@android:color/white" />
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_battery_unknown_white_24dp" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

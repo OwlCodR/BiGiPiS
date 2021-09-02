@@ -2,6 +2,8 @@ package com.bigipis.bigipis.route;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -19,16 +22,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bigipis.bigipis.R;
 import com.bigipis.bigipis.source.Route;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.view.View.GONE;
@@ -55,10 +63,33 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderRoutes holder, int position) {
         final Route itemRoute = routesList.get(position);
-        holder.textViewName.setText(itemRoute.getUser().getNickname());
-        holder.textViewCreateDate.setText(itemRoute.getCreateDate().toString());
-        holder.textViewDescription.setText(itemRoute.getDescription());
-        holder.textViewRating.setText(itemRoute.getRating());
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Map<String, Double>> routePointsList = itemRoute.getPointsList();
+        LatLng itemStartLatLng = new LatLng(routePointsList.get(0).get("latitude"), routePointsList.get(0).get("longitude"));
+        LatLng itemFinishLatLng = new LatLng(routePointsList.get(routePointsList.size() - 1).get("latitude"), routePointsList.get(routePointsList.size() - 1).get("longitude"));
+        String description = "";
+        try {
+            Address addressStart = geocoder.getFromLocation(itemStartLatLng.latitude, itemStartLatLng.longitude, 1).get(0);
+            Address addressFinish = geocoder.getFromLocation(itemFinishLatLng.latitude, itemFinishLatLng.longitude, 1).get(0);
+            String adressStart = addressStart.getAddressLine(0);
+            String adressFinish = addressFinish.getAddressLine(0);
+
+            description = "Старт: " + adressStart + "\nФиниш: " + adressFinish;
+            Log.i("RECYCLER", adressStart);
+            Log.i("RECYCLER", adressFinish);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("RECYCLER", description);
+        }
+        //if (!description.equals(""))
+            //Toast.makeText(context, description, Toast.LENGTH_SHORT).show();
+        //else
+           // Toast.makeText(context, "Пусто :(", Toast.LENGTH_SHORT).show();
+
+        holder.textViewName.setText(itemRoute.getUserName());
+        holder.textViewCreateDate.setText(String.valueOf(itemRoute.getDate()));
+        holder.textViewDescription.setText(description);
+        holder.textViewRating.setText(String.valueOf(itemRoute.getRating()));
 
         holder.imageButtonArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +107,6 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
                     holder.cardView.animate().scaleY(0.5f);
                     holder.mapView.setVisibility(View.GONE);
                 }
-                // @TODO Animate cardView
             }
         });
 
@@ -86,40 +116,28 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
 
                 // Update Recycler Item
                 itemRoute.setRating(itemRoute.getRating()-1);
-                holder.textViewRating.setText(itemRoute.getRating());
-
-                holder.imageButtonDislike.setColorFilter(Color.RED);
+                holder.textViewRating.setText(String.valueOf(Integer.parseInt(holder.textViewRating.getText().toString()) - 1));
                 holder.imageButtonLike.setColorFilter(Color.parseColor("#7D7D7D"));
+                holder.imageButtonDislike.setColorFilter(Color.RED);
                 // Update Recycler Item
 
                 // Update Database
                 final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                DocumentReference docRef = firestore.collection("routes").document(itemRoute.getUser().getUid());
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Route route = documentSnapshot.toObject(Route.class);
-                        Map<String, Object> data = new HashMap<>();
-                        route.setRating(route.getRating() - 1);
-                        data.put("rating", route.getRating());
+                CollectionReference collectionReference = firestore.collection("routes");
+                collectionReference
+                        .whereEqualTo("userID", itemRoute.getUserID())
+                        .whereEqualTo("date", itemRoute.getDate())
+                        .whereEqualTo("pointsList", itemRoute.getPointsList())
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot querySnapshot) {
+                                DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                                Route route = document.toObject(Route.class);
 
-                        firestore.collection("routes").document(itemRoute.getUser().getUid())
-                                .set(data)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("Firebase", "DocumentSnapshot successfully written!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("Firebase", "Error writing document", e);
-                                    }
-                                });
-                    }
-                    // @TODO Fix everything
-                });
+                                updateUserRating(document.getId(), route.getRating() - 1);
+                            }
+                        });
                 // Update Database
             }
         });
@@ -128,31 +146,22 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
             @Override
             public void onClick(View v) {
                 final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                DocumentReference docRef = firestore.collection("routes").document(itemRoute.getUser().getUid());
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Route route = documentSnapshot.toObject(Route.class);
-                        Map<String, Object> data = new HashMap<>();
-                        route.setRating(route.getRating() + 1);
-                        data.put("rating", route.getRating());
-                        firestore.collection("routes").document(itemRoute.getUser().getUid())
-                                .set(data)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("Firebase", "DocumentSnapshot successfully written!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("Firebase", "Error writing document", e);
-                                    }
-                                });
-                    }
-                    // @TODO Fix everything
-                });
+                CollectionReference colRef = firestore.collection("routes");
+                colRef
+                        .whereEqualTo("userID", itemRoute.getUserID())
+                        .whereEqualTo("date", itemRoute.getDate())
+                        .whereEqualTo("pointsList", itemRoute.getPointsList())
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot querySnapshot) {
+                                DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                                Route route = document.toObject(Route.class);
+
+                                updateUserRating(document.getId(), route.getRating() + 1);
+                            }
+                        });
+                holder.textViewRating.setText(String.valueOf(Integer.parseInt(holder.textViewRating.getText().toString()) + 1));
                 holder.imageButtonDislike.setColorFilter(Color.parseColor("#7D7D7D"));
                 holder.imageButtonLike.setColorFilter(Color.GREEN);
             }
@@ -160,17 +169,33 @@ public class RecyclerViewRoutesAdapter extends RecyclerView.Adapter<RecyclerView
         holder.imageButtonUserIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // @TODO Open profile
             }
         });
 
-        for (int i = 0; i < itemRoute.getChipsNames().length; i++) {
+        for (int i = 0; i < itemRoute.getChipsNames().size(); i++) {
             Chip chip = new Chip(context);
-            chip.setText(itemRoute.getChipsNames()[i]);
+            chip.setText(itemRoute.getChipsNames().get(i));
             holder.chipGroup.addView(chip, i, 0);
         }
+    }
 
-        // @TODO MAP
+    private void updateUserRating(String uid, int rating) {
+        FirebaseFirestore.getInstance()
+                .collection("routes")
+                .document(uid)
+                .update("rating", rating)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Firebase", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Firebase", "Error writing document", e);
+                    }
+                });
     }
 
     @Override

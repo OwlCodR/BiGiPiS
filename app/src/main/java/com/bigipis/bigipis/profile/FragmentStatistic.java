@@ -15,9 +15,6 @@ public class FragmentStatistic extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         myInflatedView = inflater.inflate(R.layout.fragment_statistic, container, false);
-
-
-
         return myInflatedView;
     }
 }

@@ -44,7 +44,7 @@ public class FragmentRegisterFinish extends Fragment implements View.OnClickList
     private static final String TAG = "EmailPassword";
     public static final String TAG_PASSWORD = "Password";
     public static final String TAG_EMAIL = "Email";
-    public static final String TAG_ISNAKERS = "IsNakers";
+    public static final String TAG_ISLACERS = "IsLacers";
 
     private AlertDialog.Builder builder;
     private View myInflateView;
@@ -141,7 +141,7 @@ public class FragmentRegisterFinish extends Fragment implements View.OnClickList
                                                     Log.d(TAG, "Account has been created");
                                                     FirebaseFirestore fDatabase = FirebaseFirestore.getInstance();
                                                     try {
-                                                        fDatabase.collection("users").document(Objects.requireNonNull(firebaseAuth.getUid())).set(user);
+                                                        fDatabase.collection("users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser().getUid())).set(user);
                                                         ((MainActivity) getActivity()).updateUI();
                                                     } catch (Exception e) {
                                                         Log.e("ERROR", e.getMessage());

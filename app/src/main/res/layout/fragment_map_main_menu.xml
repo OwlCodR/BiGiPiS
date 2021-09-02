@@ -6,26 +6,28 @@
     android:orientation="horizontal">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButtonNewMarker"
+        android:id="@+id/floatingActionButtonRoutes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="65dp"
         android:layout_marginEnd="10dp"
         android:alpha="0.8"
+        app:tint="@android:color/white"
         android:clickable="true"
         app:backgroundTint="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
         app:fabSize="mini"
         app:srcCompat="@mipmap/routes" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButtonStartFinish"
+        android:id="@+id/floatingActionButtonCreateRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="115dp"
         android:layout_marginEnd="10dp"
         android:alpha="0.8"
+        app:tint="@android:color/white"
         android:clickable="true"
         app:backgroundTint="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
         app:fabSize="mini"

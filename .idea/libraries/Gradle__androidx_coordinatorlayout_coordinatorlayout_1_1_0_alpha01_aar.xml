@@ -1,15 +1,20 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.coordinatorlayout:coordinatorlayout:1.1.0-alpha01@aar">
     <ANNOTATIONS>
-      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/1ad99aff0b153c079e1549ed9544be09/annotations.zip!/" />
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/1ad99aff0b153c079e1549ed9544be09/res" />
-      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/1ad99aff0b153c079e1549ed9544be09/jars/classes.jar!/" />
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/jars/classes.jar!/" />
+      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ee8622dac4d949bcb2800e5298eaf7fa/coordinatorlayout-1.1.0-alpha01/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://D:/Program_Files/Android/.gradle/caches/modules-2/files-2.1/androidx.coordinatorlayout/coordinatorlayout/1.1.0-alpha01/71352589ac3501048d7d4e47a8034a94ffbf05df/coordinatorlayout-1.1.0-alpha01-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.coordinatorlayout/coordinatorlayout/1.1.0-alpha01/71352589ac3501048d7d4e47a8034a94ffbf05df/coordinatorlayout-1.1.0-alpha01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -1,15 +1,20 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.appcompat:appcompat:1.1.0-alpha05@aar">
     <ANNOTATIONS>
-      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/593f92384419ba74142784a936542944/annotations.zip!/" />
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/593f92384419ba74142784a936542944/jars/classes.jar!/" />
-      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/593f92384419ba74142784a936542944/res" />
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/jars/classes.jar!/" />
+      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/90395d1f2097cdc0e6838f136b9ae620/appcompat-1.1.0-alpha05/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://D:/Program_Files/Android/.gradle/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.1.0-alpha05/84ecfc87147b26533855a62c0f678affed03924c/appcompat-1.1.0-alpha05-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.1.0-alpha05/84ecfc87147b26533855a62c0f678affed03924c/appcompat-1.1.0-alpha05-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

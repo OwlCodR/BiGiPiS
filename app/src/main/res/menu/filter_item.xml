@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.bigipis.bigipis.map.FragmentMapRoutes"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Button -->
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@mipmap/ic_filter"
+        android:title="Фильтр"
+        app:showAsAction="always" />
+    <!-- Button -->
+</menu>

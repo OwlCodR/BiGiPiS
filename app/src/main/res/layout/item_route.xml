@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="3dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="5dp"
         app:contentPadding="20dp">
 
@@ -29,8 +29,8 @@
 
                 <ImageButton
                     android:id="@+id/imageButtonItemIcon"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_weight="0"
                     android:background="@android:color/transparent"
                     android:scaleType="fitXY"
@@ -48,9 +48,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
+                        android:paddingStart="10dp"
                         android:text="@string/loadingText"
                         android:textColor="@color/colorDark"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -58,8 +59,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
+                        android:paddingStart="10dp"
                         android:text="@string/loadingText"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -90,9 +92,9 @@
                     android:id="@+id/textViewItemDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_marginTop="10dp"
-                    android:text="@string/loadingText" />
+                    android:text="@string/loadingText"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -123,11 +125,12 @@
                     android:id="@+id/imageButtonItemDislike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
                     android:layout_weight="0"
                     android:background="@android:color/transparent"
+                    android:paddingRight="10dp"
                     android:scaleX="0.7"
                     android:scaleY="0.7"
-                    android:layout_gravity="bottom"
                     app:srcCompat="@drawable/ic_dislike" />
 
                 <TextView
@@ -137,24 +140,24 @@
                     android:layout_weight="0"
                     android:gravity="center"
                     android:text="+21"
-                    android:textSize="14sp" />
+                    android:textSize="18sp" />
 
                 <ImageButton
                     android:id="@+id/imageButtonItemLike"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="0"
                     android:background="@android:color/transparent"
+                    android:paddingStart="10dp"
                     android:scaleX="0.7"
                     android:scaleY="0.7"
-                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_like" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroupItem"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                </com.google.android.material.chip.ChipGroup>
+                    android:layout_height="wrap_content"></com.google.android.material.chip.ChipGroup>
             </LinearLayout>
 
         </LinearLayout>

@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.savedstate:savedstate:1.0.0-rc01@aar">
+    <CLASSES>
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/f5f8f5c9a1975d8e35d2116119d57906/savedstate-1.0.0-rc01/jars/classes.jar!/" />
+      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/f5f8f5c9a1975d8e35d2116119d57906/savedstate-1.0.0-rc01/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f5f8f5c9a1975d8e35d2116119d57906/savedstate-1.0.0-rc01/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f5f8f5c9a1975d8e35d2116119d57906/savedstate-1.0.0-rc01/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f5f8f5c9a1975d8e35d2116119d57906/savedstate-1.0.0-rc01/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate/1.0.0-rc01/e6daf87ed227a6f80bb8accb466755a5ee01a652/savedstate-1.0.0-rc01-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.savedstate/savedstate/1.0.0-rc01/e6daf87ed227a6f80bb8accb466755a5ee01a652/savedstate-1.0.0-rc01-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

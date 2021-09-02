@@ -1,8 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.android.gms:play-services-wearable:12.0.1@aar">
     <CLASSES>
-      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/3efae99a33fe442a5c1b6f4de9fc6e17/jars/classes.jar!/" />
-      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/3efae99a33fe442a5c1b6f4de9fc6e17/res" />
+      <root url="jar://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/a6ce4c4e83c1be6d5f272ca1c4281ada/jetified-play-services-wearable-12.0.1/jars/classes.jar!/" />
+      <root url="file://D:/Program_Files/Android/.gradle/caches/transforms-2/files-2.1/a6ce4c4e83c1be6d5f272ca1c4281ada/jetified-play-services-wearable-12.0.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9bb45dec93e9d900c501e06a506f13ad/jetified-play-services-wearable-12.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9bb45dec93e9d900c501e06a506f13ad/jetified-play-services-wearable-12.0.1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9bb45dec93e9d900c501e06a506f13ad/jetified-play-services-wearable-12.0.1/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,59 +1,65 @@
 package com.bigipis.bigipis.source;
 
-import com.google.type.LatLng;
-
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Route {
-    private User user;
-    private Date createDate;
-    private List<LatLng> markersList;
-    private String description;
+    private String userID;
+    private long date;
+    private List<Map<String, Double>> pointsList;
     private int rating;
-    private String[] chipsNames;
+    private boolean isPublic;
+    private List<String> chipsNames;
 
-    public Route(User user, Date createDate, List<LatLng> markersList, String description, int rating, String[] chipsNames, boolean isOpenMap) {
-        this.user = user;
-        this.createDate = createDate;
-        this.markersList = markersList;
-        this.description = description;
+    private String userName;
+
+    public Route(String userID, String userName, long date, List<Map<String, Double>> pointsList, int rating, List<String> tags, boolean isPublic) {
+        this.userID = userID;
+        this.date = date;
+        this.pointsList = pointsList;
         this.rating = rating;
-        this.chipsNames = chipsNames;
+        this.chipsNames = tags;
+        this.isPublic = isPublic;
+        this.userName = userName;
     }
 
     Route(){}
 
-    public User getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public List<LatLng> getMarkersList() {
-        return markersList;
+    public boolean isPublic() {
+        return isPublic;
     }
 
-    public void setMarkersList(List<LatLng> markersList) {
-        this.markersList = markersList;
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+    public long getDate() {
+        return date;
     }
 
-    public String getDescription() {
-        return description;
+
+    public List<Map<String, Double>> getPointsList() {
+        return pointsList;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPointsList(List<Map<String, Double>> pointsList) {
+        this.pointsList = pointsList;
     }
 
     public int getRating() {
@@ -64,11 +70,11 @@ public class Route {
         this.rating = rating;
     }
 
-    public String[] getChipsNames() {
+    public List<String> getChipsNames() {
         return chipsNames;
     }
 
-    public void setChipsNames(String[] chipsNames) {
+    public void setChipsNames(List<String> chipsNames) {
         this.chipsNames = chipsNames;
     }
 }

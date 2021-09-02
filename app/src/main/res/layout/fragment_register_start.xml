@@ -103,14 +103,14 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <CheckBox
-                        android:id="@+id/checkBoxIsNakers"
+                        android:id="@+id/checkBoxIsLacers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="40dp"
                         android:layout_marginTop="10dp"
                         android:layout_weight="1"
-                        android:contentDescription="@string/isNakers"
-                        android:text="@string/isNakers" />
+                        android:contentDescription="@string/isLacers"
+                        android:text="@string/isLacers" />
 
                     <Button
                         android:id="@+id/buttonContinue"

@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
             android:icon="@mipmap/profile"
+            app:tint="@android:color/darker_gray"
             android:title="Профиль" />
         <item
             android:id="@+id/nav_routes"
             android:icon="@mipmap/routes"
+            app:tint="@android:color/darker_gray"
             android:title="Маршруты" />
         <item
             android:id="@+id/nav_map"
             android:icon="@mipmap/map"
+            app:tint="@android:color/darker_gray"
             android:title="Карта" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
+            app:tint="@android:color/darker_gray"
             android:title="Настройки" />
     </group>
     <item android:title="Дополнительно">
@@ -26,10 +31,12 @@
             <item
                 android:id="@+id/nav_help"
                 android:icon="@drawable/ic_info"
+                app:tint="@android:color/darker_gray"
                 android:title="Помощь" />
             <item
                 android:id="@+id/nav_dev"
                 android:icon="@drawable/ic_developers"
+                app:tint="@android:color/darker_gray"
                 android:title="Разработчики" />
         </menu>
     </item>

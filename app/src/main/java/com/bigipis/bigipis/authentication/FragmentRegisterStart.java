@@ -29,7 +29,7 @@ public class FragmentRegisterStart extends Fragment implements View.OnClickListe
     private TextInputLayout textInputLayoutEmail, textInputLayoutPassword, textInputLayoutRepeatPassword;
     private EditText mEmailField, mPasswordField, mRepeatPasswordField;
     private Button buttonContinue;
-    private CheckBox checkBoxIsNakers;
+    private CheckBox checkBoxIsLacers;
 
     @Nullable
     @Override
@@ -47,8 +47,8 @@ public class FragmentRegisterStart extends Fragment implements View.OnClickListe
         buttonContinue = myInflateView.findViewById(R.id.buttonContinue);
         buttonContinue.setOnClickListener(this);
 
-        checkBoxIsNakers = myInflateView.findViewById(R.id.checkBoxIsNakers);
-        // Create Bluetooth connection with Arduino if checkBoxIsNakers.isChecked()!
+        checkBoxIsLacers = myInflateView.findViewById(R.id.checkBoxIsLacers);
+        // Create Bluetooth connection with Arduino if checkBoxIsLacers.isChecked()!
 
         return myInflateView;
     }
@@ -65,9 +65,9 @@ public class FragmentRegisterStart extends Fragment implements View.OnClickListe
         final Bundle bundle = new Bundle();
         bundle.putString(TAG_EMAIL,email);
         bundle.putString(TAG_PASSWORD, password);
-        if (!((MainActivity) getActivity()).isNakersConnected && checkBoxIsNakers.isChecked()) {
+        if (!((MainActivity) getActivity()).isLacersConnected && checkBoxIsLacers.isChecked()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Хотите подключить Nakers прямо сейчас?");
+            builder.setTitle("Хотите подключить Lacers прямо сейчас?");
             builder.setPositiveButton("ОК", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int arg1) {
                     dialog.cancel();

@@ -17,7 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bigipis.bigipis.MainActivity;
 import com.bigipis.bigipis.R;
 import com.bigipis.bigipis.bluetooth.FragmentBluetoothList;
-import com.bigipis.bigipis.bluetooth.FragmentTestNakers;
+import com.bigipis.bigipis.bluetooth.FragmentTestLacers;
 import com.google.android.material.snackbar.Snackbar;
 
 public class FragmentSettings extends Fragment implements View.OnClickListener {
@@ -39,27 +39,27 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             case R.id.cardViewTest:
             {
-                if (((MainActivity) getActivity()).isNakersConnected) {
+                if (((MainActivity) getActivity()).isLacersConnected) {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    Fragment fragment = new FragmentTestNakers();
+                    Fragment fragment = new FragmentTestLacers();
                     ft.replace(R.id.content_frame, fragment);
                     ft.addToBackStack(null);
                     ft.commit();
                 } else {
-                    Snackbar.make(view, "Для начала подключите Nakers!", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "Для начала подключите Lacers!", Snackbar.LENGTH_SHORT).show();
                 }
                 break;
             }
             case  R.id.cardViewConnect:
             {
-                if (!((MainActivity) getActivity()).isNakersConnected) {
+                if (!((MainActivity) getActivity()).isLacersConnected) {
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     Fragment fragment = new FragmentBluetoothList();
                     ft.replace(R.id.content_frame, fragment);
                     ft.addToBackStack(null);
                     ft.commit();
                 } else {
-                    Snackbar.make(view, "Nakers уже подключены!", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view, "Lacers уже подключены!", Snackbar.LENGTH_SHORT).show();
                 }
                 break;
             }

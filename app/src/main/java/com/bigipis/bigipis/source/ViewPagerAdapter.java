@@ -1,13 +1,16 @@
 package com.bigipis.bigipis.source;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bigipis.bigipis.FragmentError;
+import com.bigipis.bigipis.tutorial.FragmentTutorial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context context;
-    private final List<Fragment> mFragmentList = new ArrayList<>();
+    private List<Fragment> mFragmentList = new ArrayList<>();
     private List<String> tabNamesList = new ArrayList<>();
     private Fragment fragmentError = new FragmentError();
 
@@ -52,4 +55,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         mFragmentList.add(fragment);
         tabNamesList.add(title);
     }
+
+
 }

@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="10dp"
-                    android:text="Протестировать Nakers"
+                    android:text="Протестировать Lacers"
                     android:textColor="?attr/colorAccent"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="10dp"
-                    android:text="Nakers любят тесты, но больше всего тех, кто их создает!"
+                    android:text="Lacers любят тесты, но больше всего тех, кто их создает!"
                     android:textColor="@color/colorPrimary" />
             </LinearLayout>
 
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="10dp"
-                    android:text="Подключить Nakers"
+                    android:text="Подключить Lacers"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="10dp"
-                    android:text="Самое время подключить Nakers, если вы откладывали это дело на потом!"
+                    android:text="Самое время подключить Lacers, если вы откладывали это дело на потом!"
                     android:textColor="?attr/colorPrimary" />
             </LinearLayout>
 

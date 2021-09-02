@@ -11,7 +11,7 @@
     <string name="hint_password">Пароль</string>
     <string name="hint_email">Почта</string>
     <string name="hint_repeat_password">Повторите</string>
-    <string name="isNakers">У меня есть Nakers</string>
+    <string name="isLacers">У меня есть Lacers</string>
     <string name="changeUserIcon">ChangeUserIcon</string>
     <string name="hint_nickname">Ник</string>
     <string name="loading">Загрузка</string>
