@@ -7,3 +7,4 @@
 - Firebase Analytics
 - Google Maps API
 - Bluetooth LE
+- SQLite
